@@ -1,0 +1,82 @@
+---
+- block:
+  - name: Create iptables POSTROUTING array
+    set_fact: iptables_command="[ '-A', 'POSTROUTING' ]"
+
+  - name: Add incomming_dev rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-o', '{{ item.incomming_dev }}' ]"
+    when: item.incomming_dev is defined
+
+  - name: Add incomming_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-d', '{{ item.incomming_network }}' ]"
+    when: item.incomming_network is defined
+
+  - name: Add outgoing_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-s', '{{ item.outgoing_network }}' ]"
+    when: item.outgoing_network is defined
+
+  - name: Add masquerade rule 
+    set_fact: iptables_command="{{ iptables_command }} + [ '-j', 'MASQUERADE' ]"
+
+  - name: Add add to the list
+    set_fact: nat_rules="{{ nat_rules }} + [ {{ iptables_command }} ]" 
+  when: item.masquerading
+
+- block:
+  - name: Create iptables FORWARD array (incomming > outgoing)
+    set_fact: iptables_command="[ '-A', 'ufw-before-forward' ]"
+  
+  - name: Add incomming_dev rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-i', '{{ item.incomming_dev }}' ]"
+    when: item.incomming_dev is defined
+
+  - name: Add incomming_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-s', '{{ item.incomming_network }}' ]"
+    when: item.incomming_network is defined
+
+  - name: Add outgoing_dev rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-o', '{{ item.outgoing_dev }}' ]"
+    when: item.outgoing_dev is defined
+
+  - name: Add outgoing_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-d', '{{ item.outgoing_network }}' ]"
+    when: item.outgoing_network is defined
+  
+  - name: Set ctstat setting 
+    set_fact: 
+      iptables_command: "{{ iptables_command }} + [ '-m conntrack', '--ctstate', '{{ item.conntrack_state}}' ]"
+    when: item.conntrack_state is defined
+
+  - name: Add masquerade rule 
+    set_fact: iptables_command="{{ iptables_command }} + [ '-j', 'ACCEPT' ]"
+
+  - name: Add add to the list
+    set_fact: before_rules="{{ before_rules }} + [ {{ iptables_command }} ]" 
+
+- block:
+  - name: Create iptables FORWARD array
+    set_fact: iptables_command="[ '-A', 'ufw-before-forward' ]"
+  
+  - name: Add incomming_dev rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-o', '{{ item.incomming_dev }}' ]"
+    when: item.incomming_dev is defined
+
+  - name: Add incomming_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-d', '{{ item.incomming_network }}' ]"
+    when: item.incomming_network is defined
+
+  - name: Add outgoing_dev rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-i', '{{ item.outgoing_dev }}' ]"
+    when: item.outgoing_dev is defined
+
+  - name: Add outgoing_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-s', '{{ item.outgoing_network }}' ]"
+    when: item.outgoing_network is defined
+
+  - name: Add masquerade rule 
+    set_fact: iptables_command="{{ iptables_command }} + [ '-j', 'ACCEPT' ]"
+
+  - name: Add add to the list
+    set_fact: before_rules="{{ before_rules }} + [ {{ iptables_command }} ]" 
+
+

@@ -1,0 +1,22 @@
+
+
+---
+- block:
+  - name: Create iptables POSTROUTING array
+    set_fact: iptables_command="[ '-A', 'POSTROUTING' ]"
+
+  - name: Add incomming_dev rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-o', '{{ item.0.incomming_dev }}' ]"
+
+  - name: Add outgoing_network rule
+    set_fact: iptables_command="{{ iptables_command }} + [ '-s', '{{ item.1.source_ip }}' ]"
+
+  - name: Add SNAT 
+    set_fact: iptables_command="{{ iptables_command }} + [ '-j', 'SNAT' ]"
+
+  - name: Add to-source rule 
+    set_fact: iptables_command="{{ iptables_command }} + [ '--to-source', '{{ item.1.routed_ip }}' ]"
+
+  - name: Add add to the list
+    set_fact: nat_rules="{{ nat_rules }} + [ {{ iptables_command }} ]" 
+

@@ -1,0 +1,72 @@
+---
+- name: assure ufw installed
+  apt: pkg=ufw state=present
+
+- name: enable ufw service at boot
+  service: name=ufw enabled=True
+
+- name: setup kernel tracking
+  lineinfile:
+    dest: /etc/default/ufw
+    regexp: '^IPT_MODULES='
+    line: 'IPT_MODULES="{{ iptables_kernel_modules }}"'
+    state: present
+
+- name: update sysctl forward ipv4
+  sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes
+
+- name: update sysctl forward ipv6
+  sysctl: name="net.ipv6.conf.all.forwarding" value=1 sysctl_set=yes
+
+- name: set ufw default forward policy to deny
+  lineinfile:
+    dest=/etc/default/ufw
+    regexp='^DEFAULT_FORWARD_POLICY='
+    line='DEFAULT_FORWARD_POLICY="ACCEPT"'
+    state=present
+  when: iptables_masquerade
+
+- name: set ufw default forward policy to accept
+  lineinfile:
+    dest=/etc/default/ufw
+    regexp='^DEFAULT_FORWARD_POLICY='
+    line='DEFAULT_FORWARD_POLICY="DENY"'
+    state=present
+  when: not iptables_masquerade
+
+- name: set default ufw policy to deny
+  ufw: state=enabled policy=deny
+  when: iptables_masquerade
+
+- name: set default ufw policy to allow
+  ufw: state=enabled policy=allow
+  when: not iptables_masquerade
+
+- name: enable ssh (always)
+  ufw: rule=allow name=OpenSSH
+  notify:
+    - reload ufw
+
+- name: Allow all access from trusted networks to this host
+  ufw: rule=allow src={{ item }}
+  with_items: "{{ iptables_allowed_networks }}"
+  when: iptables_masquerade and iptables_allowed_networks is defined
+  notify:
+    - reload ufw
+
+- name: enable inbound ports
+  ufw: rule=allow proto={{ item.proto }} port={{ item.port }}
+  with_items: "{{ iptables_enable_ports }}"
+  when: iptables_masquerade and iptables_enable_ports is defined
+  notify:
+    - restart ufw
+
+- name: enable masquerading
+  service: name=ufw state=started enabled=yes
+  when: iptables_masquerade
+
+- name: disable masquerading
+  service: name=ufw state=stopped enabled=no
+  when: not iptables_masquerade
+  notify:
+    - stop ufw
