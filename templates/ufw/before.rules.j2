@@ -8,7 +8,6 @@
 #   ufw-before-output
 #   ufw-before-forward
 #
-{% if iptables_masquerade %}
 *nat
 :PREROUTING ACCEPT [0:0]
 :POSTROUTING ACCEPT [0:0]
@@ -19,8 +18,6 @@
 {% endfor %}
 
 COMMIT
-{% endif %}
-
 # Don't delete these required lines, otherwise there will be errors
 *filter
 :ufw-before-input - [0:0]
@@ -36,15 +33,6 @@ COMMIT
 # allow all on loopback
 -A ufw-before-input -i lo -j ACCEPT
 -A ufw-before-output -o lo -j ACCEPT
-
-{% for net in iptables_nat_networks %}
--A ufw-before-forward -i {{ net.external_dev }} -d {{ net.internal_net }} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
--A ufw-before-forward -o {{ net.external_dev }} -s {{ net.internal_net }} -j ACCEPT
--A ufw-before-input -i {{ net.internal_dev }} -p tcp -m tcp --dport 67 -j ACCEPT
--A ufw-before-input -i {{ net.internal_dev }} -p udp -m udp --dport 67 -j ACCEPT
--A ufw-before-input -i {{ net.internal_dev }} -p tcp -m tcp --dport 68 -j ACCEPT
--A ufw-before-input -i {{ net.internal_dev }} -p udp -m udp --dport 68 -j ACCEPT
-{% endfor %}
 
 
 # quickly process packets for which we already have a connection

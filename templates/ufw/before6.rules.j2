@@ -16,6 +16,9 @@
 :ufw6-before-forward - [0:0]
 # End required lines
 
+{% for rule in before_rules %}
+{{ rule | join(' ')  }}
+{% endfor %}
 
 # allow all on loopback
 -A ufw6-before-input -i lo -j ACCEPT

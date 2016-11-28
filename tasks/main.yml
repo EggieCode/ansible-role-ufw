@@ -1,5 +1,35 @@
 ---
-#- include: install_debian.yml
-#  when: ansible_os_family == 'Debian'
+- include: install_debian.yml
+  when: ansible_os_family == 'Debian'
 
-- include: templates.yml
+- name: "UFW Forward generate IPv4"
+  ufw_forward:
+    data: "{{ ufw_forwarding }}"
+    ipv6: False
+  register: ufw_result
+
+- name: "Define vars"
+  set_fact:
+    nat_rules: "{{ ufw_result.meta.nat_rules }}"
+    before_rules: "{{ ufw_result.meta.filter_rules }}"
+
+- name: configure iptables masquerading
+  template: src=ufw/before.rules.j2 dest=/etc/ufw/before.rules mode=0644
+  notify:
+    - restart ufw
+
+- name: "UFW Forward generate IPv6"
+  ufw_forward:
+    data: "{{ ufw_forwarding6 }}"
+    ipv6: True
+  register: ufw_result
+
+- name: "Define vars"
+  set_fact:
+    nat_rules: "{{ ufw_result.meta.nat_rules }}"
+    before_rules: "{{ ufw_result.meta.filter_rules }}"
+
+- name: configure ip6tables rules 
+  template: src=ufw/before6.rules.j2 dest=/etc/ufw/before6.rules mode=0644
+  notify:
+    - restart ufw
