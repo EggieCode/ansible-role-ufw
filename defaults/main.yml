@@ -1,5 +1,4 @@
 ---
-ufw:
-  kernel_modules: "nf_conntrack_ftp nf_nat_ftp nf_conntrack_netbios_ns"
-  forwarding: []
-  forwarding6: []
+ufw_kernel_modules: "nf_conntrack_ftp nf_nat_ftp nf_conntrack_netbios_ns"
+ufw_forwarding: []
+ufw_forwarding6: []

@@ -15,10 +15,10 @@ Explanation:
 ```yaml
 
 
-ufw.kernel_modules:  	       #Set iptables kernel modules
-ufw.policy:  		       #Set default policy to deny/allow
+ufw_kernel_modules:  	       #Set iptables kernel modules
+ufw_policy:  		       #Set default policy to deny/allow
 
-ufw.forwarding: []             #IPv4 forwarding rules
+ufw_forwarding: []             #IPv4 forwarding rules
   - comment:                   #Comment
     incomming_dev:             #Incomming interface
     incomming_network:         #Incomming network/subnet
