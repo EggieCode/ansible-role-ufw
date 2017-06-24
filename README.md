@@ -15,40 +15,40 @@ Explanation:
 ```yaml
 
 
-ufw.kernel_modules:  	      _#Set iptables kernel modules_
-ufw.policy:  		      _#Set default policy to deny/allow_
+ufw.kernel_modules:  	       #Set iptables kernel modules
+ufw.policy:  		       #Set default policy to deny/allow
 
-ufw.forwarding: []            _#IPv4 forwarding rules_
-  - comment:                  _#Comment_
-    incomming_dev:            _#Incomming interface_
-    incomming_network:        _#Incomming network/subnet_
-    outgoing_dev:             _#Outgoing interface_
-    outgoing_network:         _#Outgoing network/subnet_
-    masquerading:             _#Enable masquerading (boolean)_
-    conntrack_state:          _#Incomming traffic ctstat setting _
-    reroute: []               _#Reroute outgoing IP of host (Useful for internal subnets)_
-      - comment:              _#Comment_
-        routed_ip:            _#Reroute IP_
-        source_ip:            _#Source is internal ip where is routed out_
-    forwards: []              _#Port forwarding_
-      - comment:              _#Comment_
-        protocols: []         _#Protocol. TCP/UDP as array_
-        allowed_sources: []   _#Allowed IPs_
-        incomming_ip:         _#Orignal destiantion ip_
-        incomming_port:       _#Orignal destiantion port_
-        destination_ip:       _#Outgoing IP addresss_
-        destination_port:     _#Outgoing IP addresss_
+ufw.forwarding: []             #IPv4 forwarding rules
+  - comment:                   #Comment
+    incomming_dev:             #Incomming interface
+    incomming_network:         #Incomming network/subnet
+    outgoing_dev:              #Outgoing interface
+    outgoing_network:          #Outgoing network/subnet
+    masquerading:              #Enable masquerading (boolean)
+    conntrack_state:           #Incomming traffic ctstat setting
+    reroute: []                #Reroute outgoing IP of host (Useful for internal subnets)
+      - comment:               #Comment
+        routed_ip:             #Reroute IP
+        source_ip:             #Source is internal ip where is routed out
+    forwards: []               #Port forwarding
+      - comment:               #Comment
+        protocols: []          #Protocol. TCP/UDP as array
+        allowed_sources: []    #Allowed IPs
+        incomming_ip:          #Orignal destiantion ip
+        incomming_port:        #Orignal destiantion port
+        destination_ip:        #Outgoing IP addresss
+        destination_port:      #Outgoing IP addresss
 
-ufw.forwarding6: []           _#_#IPv4 forwarding rules_
-  - incomming_dev:            _#Incomming interface_
-    incomming_network:        _#Incomming network/subnet_
-    outgoing_dev:             _#Outgoing interface_
-    outgoing_network:         _#Outgoing network/subnet_
-    conntrack_state:          _#Incomming traffic ctstat setting_
-    forwards: []              _#Port forwarding
-      - destination_network:  _#Outgoing network/subnet addresss_
-        destination_port:     _#Outgoing IP addresss_
-        protocols:            _#Protocol_
+ufw.forwarding6: []            #IPv4 forwarding rules
+  - incomming_dev:             #Incomming interface
+    incomming_network:         #Incomming network/subnet
+    outgoing_dev:              #Outgoing interface
+    outgoing_network:          #Outgoing network/subnet
+    conntrack_state:           #Incomming traffic ctstat setting
+    forwards: []               #Port forwarding
+      - destination_network:   #Outgoing network/subnet addresss
+        destination_port:      #Outgoing IP addresss
+        protocols:             #Protocol
 
 ```
 
