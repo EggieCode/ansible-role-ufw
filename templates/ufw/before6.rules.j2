@@ -8,7 +8,16 @@
 #   ufw-before-output
 #   ufw-before-forward
 #
+*nat
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+-F
 
+{% for rule in nat_rules %}
+{{ rule | join(' ')  }}
+{% endfor %}
+
+COMMIT
 # Don't delete these required lines, otherwise there will be errors
 *filter
 :ufw6-before-input - [0:0]

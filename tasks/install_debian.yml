@@ -18,8 +18,12 @@
 - name: update sysctl forward ipv6
   sysctl: name="net.ipv6.conf.all.forwarding" value=1 sysctl_set=yes
 
+- name: Enable UFW
+  ufw: state=enabled policy=deny
+
 - name: enable ssh (always)
   ufw: rule=allow name=OpenSSH
   notify:
     - reload ufw
+
 
