@@ -10,7 +10,6 @@ Testing on Ubuntu 16.04
 
 Variables
 ---------
-```yaml
 
 <tt>default.yml</tt> (Default can be found there)
 
@@ -48,8 +47,6 @@ Variables
 ***<tt>	      destination_network: </tt> Outgoing network/subnet addresss
 ***<tt>	      destination_port: </tt> Outgoing IP addresss 
 
-```
-
 Custom rules
 ------------
 
@@ -81,7 +78,7 @@ Simple example with custom ufw rules
         - "{{ ufw.forwarding6 }}"
     
 
-
+```
 Licence
 -------
 
