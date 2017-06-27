@@ -19,7 +19,7 @@ ufw_kernel_modules:  	       #Set iptables kernel modules
 ufw_policy:  		       #Set default policy to deny/allow
 
 ufw_forwarding: []             #IPv4 forwarding rules
-  - comment:                   #Comment
+  - comment:                   #Comment                  ; Not yet used.
     incomming_dev:             #Incomming interface
     incomming_network:         #Incomming network/subnet
     outgoing_dev:              #Outgoing interface
@@ -27,28 +27,33 @@ ufw_forwarding: []             #IPv4 forwarding rules
     masquerading:              #Enable masquerading (boolean)
     conntrack_state:           #Incomming traffic ctstat setting
     reroute: []                #Reroute outgoing IP of host (Useful for internal subnets)
-      - comment:               #Comment
+      - comment:               #Comment                  ; Not yet used.
         routed_ip:             #Reroute IP
         source_ip:             #Source is internal ip where is routed out
     forwards: []               #Port forwarding
-      - comment:               #Comment
+      - comment:               #Comment                  ; Not yet used.
         protocols: []          #Protocol. TCP/UDP as array
-        allowed_sources: []    #Allowed IPs
+        allowed_sources: []    #Allowed IPs   (TODO)
         incomming_ip:          #Orignal destiantion ip
         incomming_port:        #Orignal destiantion port
         destination_ip:        #Outgoing IP addresss
-        destination_port:      #Outgoing IP addresss
+        destination_port:      #Outgoing Port addresss
 
 ufw.forwarding6: []            #IPv4 forwarding rules
-  - incomming_dev:             #Incomming interface
+  - comment:                   #Comment                  ; Not yet used.
+    incomming_dev:             #Incomming interface
     incomming_network:         #Incomming network/subnet
     outgoing_dev:              #Outgoing interface
     outgoing_network:          #Outgoing network/subnet
     conntrack_state:           #Incomming traffic ctstat setting
+    masquerading:              #Enable masquerading (boolean)
     forwards: []               #Port forwarding
-      - destination_network:   #Outgoing network/subnet addresss
-        destination_port:      #Outgoing IP addresss
-        protocols:             #Protocol
+      - comment:               #Comment                  ; Not yet used.
+        incomming_ip:          #Orignal destiantion ip   ; Only used when masquerading is enabled
+        incomming_port:        #Orignal destiantion port ; Only used when masquerading is enabled
+        protocols: []          #Protocol
+        destination_ip:        #Outgoing IP addresss     
+        destination_port:      #Outgoing Port addresss   
 
 ```
 
