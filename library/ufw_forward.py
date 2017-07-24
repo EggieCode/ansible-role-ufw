@@ -78,7 +78,8 @@ class UFWForwards(object):
         
         rule += ['-j', 'SNAT']
         rule += ["--to-source", item['routed_ip']]
-        self.nat_rules.append(rule)
+        if rule not in self.nat_rules:
+            self.nat_rules.append(rule)
 
     def _port_forward_dnat_generate(self, item, protocol, in_port, dport):
         rule = ["-A", "PREROUTING"]
@@ -96,7 +97,8 @@ class UFWForwards(object):
             rule += ["--to-destination", "[{}]:{}".format(item['destination_ip'], str(dport))]
         else:
             rule += ["--to-destination", "{}:{}".format(item['destination_ip'], str(dport))]
-        self.nat_rules.append(rule)
+        if rule not in self.nat_rules:
+            self.nat_rules.append(rule)
 
 
     def _port_forward_generate(self, item, protocol, dport):
@@ -118,7 +120,8 @@ class UFWForwards(object):
             rule += ['--dport', dport]
 
         rule += ['-j', 'ACCEPT']
-        self.filter_rules.append(rule)
+        if rule not in self.filter_rules:
+            self.filter_rules.append(rule)
         
     
     def _masquerade_generate(self):
@@ -132,7 +135,8 @@ class UFWForwards(object):
             rule += ['-s', self.outgoing_network]
         rule += ['-j', 'MASQUERADE']
         
-        self.nat_rules.append(rule)
+        if rule not in self.nat_rules:
+            self.nat_rules.append(rule)
 
     def _forward_generate(self):
         for i in [('i','s','o','d'),('o','d','i','s')]:
@@ -149,13 +153,15 @@ class UFWForwards(object):
                 rule += ['-m conntrack', '--ctstate', self.conntrack_state]
                 
             rule += ['-j', 'ACCEPT']
-            self.filter_rules.append(rule)
+            if rule not in self.filter_rules:
+                self.filter_rules.append(rule)
 
         rule = ["-A", self.ufw_chain + "-before-forward"]
         rule += ['-i', self.outgoing_dev]
         rule += ['-o', self.outgoing_dev]
         rule += ['-j', 'ACCEPT']
-        self.filter_rules.append(rule)
+        if rule not in self.filter_rules:
+            self.filter_rules.append(rule)
        
     
 def main():
@@ -172,9 +178,9 @@ def main():
 
     for item in module.params['data']:
         ufw_forwards = UFWForwards(item, module.params['ipv6'])
+        ufw_forwards.nat_rules = response['nat_rules']
+        ufw_forwards.filter_rules = response['filter_rules']
         ufw_forwards.generate()
-        response['nat_rules'] += ufw_forwards.nat_rules 
-        response['filter_rules'] += ufw_forwards.filter_rules 
 
     module.exit_json(changed=False, meta=response)
 
