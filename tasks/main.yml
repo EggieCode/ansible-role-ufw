@@ -1,6 +1,5 @@
 ---
 - include: install_debian.yml
-  when: ansible_os_family == 'Debian'
 
 - name: "UFW Forward generate IPv4"
   ufw_forward:

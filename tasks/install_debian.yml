@@ -18,8 +18,27 @@
 - name: update sysctl forward ipv6
   sysctl: name="net.ipv6.conf.all.forwarding" value=1 sysctl_set=yes
 
+- name: UFW Default config - INPUT_POLICY Drop
+  lineinfile: 
+    dest: /etc/default/ufw
+    regexp: "^DEFAULT_INPUT_POLICY"
+    line: 'DEFAULT_INPUT_POLICY="DROP"'
+  notify:
+    - reload ufw
+
+- name: UFW Default config - FORWARD_POLICY Drop
+  lineinfile:
+    dest: /etc/default/ufw
+    regexp: "^DEFAULT_FORWARD_POLICY"
+    line: 'DEFAULT_FORWARD_POLICY="DROP"'
+  notify:
+    - reload ufw
+
 - name: Enable UFW
   ufw: state=enabled policy=deny
+
+- name: Enable UFW
+  ufw: state=enabled policy=deny direction=routed
 
 - name: enable ssh (always)
   ufw: rule=allow name=OpenSSH
