@@ -62,7 +62,6 @@ class UFWForwards(object):
         for protocol in item['protocol']:
             ports = zip(item['incomming_port'], item['destination_port'])
             for in_port, dport in ports:
-                print(item, protocol, dport)
                 self._port_forward_generate(item, protocol, dport)
                 if self.masquerading:
                     self._port_forward_dnat_generate(item, protocol, in_port, dport)
