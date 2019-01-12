@@ -1,34 +1,50 @@
 ---
 - include: install_debian.yml
+  tags: "install"
 
 - name: "UFW Forward generate IPv4"
   ufw_forward:
     data: "{{ ufw_forwarding }}"
     ipv6: False
   register: ufw_result
+  tags: "configure"
 
 - name: "Define vars"
   set_fact:
     nat_rules: "{{ ufw_result.meta.nat_rules }}"
     before_rules: "{{ ufw_result.meta.filter_rules }}"
+  tags: "configure"
 
 - name: configure iptables masquerading
   template: src=ufw/before.rules.j2 dest=/etc/ufw/before.rules mode=0644
   notify:
     - restart ufw
+  tags: "configure"
 
 - name: "UFW Forward generate IPv6"
   ufw_forward:
     data: "{{ ufw_forwarding6 }}"
     ipv6: True
   register: ufw_result
+  tags: "configure"
 
 - name: "Define vars"
   set_fact:
     nat_rules: "{{ ufw_result.meta.nat_rules }}"
     before_rules: "{{ ufw_result.meta.filter_rules }}"
+  tags: "configure"
 
 - name: configure ip6tables rules 
   template: src=ufw/before6.rules.j2 dest=/etc/ufw/before6.rules mode=0644
   notify:
     - restart ufw
+  tags: "configure"
+
+- name: enable ufw service at boot
+  service: name=ufw enabled=True
+
+- name: Enable UFW
+  ufw: state=enabled policy=deny
+
+- name: Enable UFW
+  ufw: state=enabled policy=deny direction=routed
