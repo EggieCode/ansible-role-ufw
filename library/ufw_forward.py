@@ -59,10 +59,10 @@ class UFWForwards(object):
         if item['incomming_port'][0] is None and len(item['destination_port']) > 1:
             item['incomming_port'] = [None for i in range(len(item['destination_port']))]
 
-        ports = zip(item['incomming_port'], item['destination_port'])
-
         for protocol in item['protocol']:
+            ports = zip(item['incomming_port'], item['destination_port'])
             for in_port, dport in ports:
+                print(item, protocol, dport)
                 self._port_forward_generate(item, protocol, dport)
                 if self.masquerading:
                     self._port_forward_dnat_generate(item, protocol, in_port, dport)
@@ -117,7 +117,7 @@ class UFWForwards(object):
         if protocol and dport:
             rule += ['-p', protocol]
             rule += ['-m', protocol]
-            rule += ['--dport', dport]
+            rule += ['--dport', str(dport)]
 
         rule += ['-j', 'ACCEPT']
         if rule not in self.filter_rules:
@@ -162,7 +162,6 @@ class UFWForwards(object):
         rule += ['-j', 'ACCEPT']
         if rule not in self.filter_rules:
             self.filter_rules.append(rule)
-       
     
 def main():
     
