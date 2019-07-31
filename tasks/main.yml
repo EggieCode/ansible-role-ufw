@@ -8,12 +8,14 @@
     ipv6: False
   register: ufw_result
   tags: "configure"
+  check_mode: no
 
 - name: "Define vars"
   set_fact:
     nat_rules: "{{ ufw_result.meta.nat_rules }}"
     before_rules: "{{ ufw_result.meta.filter_rules }}"
   tags: "configure"
+  check_mode: no
 
 - name: configure iptables masquerading
   template: src=ufw/before.rules.j2 dest=/etc/ufw/before.rules mode=0644
@@ -27,12 +29,14 @@
     ipv6: True
   register: ufw_result
   tags: "configure"
+  check_mode: no
 
 - name: "Define vars"
   set_fact:
     nat_rules: "{{ ufw_result.meta.nat_rules }}"
     before_rules: "{{ ufw_result.meta.filter_rules }}"
   tags: "configure"
+  check_mode: no
 
 - name: configure ip6tables rules 
   template: src=ufw/before6.rules.j2 dest=/etc/ufw/before6.rules mode=0644
